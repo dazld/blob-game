@@ -7,7 +7,8 @@ require.config({
         "handlebars": "vendor/handlebars.min",
         "postal":"vendor/postal-0.8.2",
         "text":"vendor/text",
-        "pumpkin":"vendor/pumpkin"
+        "pumpkin":"vendor/pumpkin",
+        "pixi":"vendor/pixi"
         
     },
     map: {
@@ -15,7 +16,10 @@ require.config({
     },
     shim: {
         
-        
+        "pixi":{
+            deps: [],
+            exports:"PIXI"
+        },
         "underscore": {
             exports: "_"
         },

@@ -1,47 +1,78 @@
 define([
-	"pumpkin"
+	"pumpkin",
+	"pixi",
+	"lib/utils"
 ],function(
-	Pumpkin
+	Pumpkin,
+	glmatrix,
+	utils
 ){
+
+	
+	"use strict";
 
 	var Module = Pumpkin.Module.extend({
 		_name: "stage",
 		el: 'canvas',
 		$el: false,
 		active: false,
+		frame: false, // where to hold ref for RAF
 		topics: {
 			"window.resize":"render"
 			
 		},
 		events: {
-			"click":"doStuff",
-			"mousemove":"render"
+			"mousedown":"doStuff"
+			/*"mousemove":"render"*/
 
 		},
 		init: function(){
 			var that = this,
 				$w = $(window);
-			var holder = document.createElement(this.el);
+			
+			this.sandbox.stage = new PIXI.Stage();
+			this.sandbox.renderer = PIXI.autoDetectRenderer();
 
-			var ctx = holder.getContext('2d');
-			this.sandbox.ctx = this.ctx = ctx;
+			this.el = this.sandbox.renderer.view;
+
 			// bind window resize events 
-			$(window).resize(function(e){
+			$w.on('resize orientationchange',function(e){
 				that.updateDimensions(e);
-			});
+			}).trigger('resize');
 
-			this.$el = $(holder);
-
+			this.$el = $(this.el);
 			this.$el.addClass('stage');
-
 			this.bindEvents();
-
 			this.sandbox.root.append(this.$el);
 
 		},
 		updateDimensions: _.debounce(function(e){
+			if (this.frame) {
+				cancelAnimationFrame(this.frame);	
+			};
+			
 			var viewPortWidth = window.innerWidth,
    				viewPortHeight = window.innerHeight;
+
+   			var dims = {};
+
+   			dims.w = viewPortWidth;
+   			dims.h = viewPortHeight;
+
+   			if (this.sandbox.dims) {
+   				
+   				var olddims = this.sandbox.dims;
+
+   				if (olddims.w === dims.w && olddims.h === dims.h) {
+   					return;
+   				};
+   			};
+
+   			this.sandbox.dims = dims;
+   			this.sandbox.renderer.resize(dims.w,dims.h);
+
+   			this.el.width = dims.w;
+   			this.el.height = dims.h;
 
 			this.$el.attr('width',viewPortWidth)
 					.attr('height',viewPortHeight)
@@ -49,34 +80,28 @@ define([
 					.height(viewPortHeight);
 
 			this.channel.publish('window.resize',{width: viewPortWidth,height: viewPortHeight});
-
+			
 		},120),
 		start: function(){
 			this.active = true;
 		},
-		render: _.throttle(function(e){
-			var ctx = this.ctx;
-			if (!e) {
-				return;
-			};
-			ctx.beginPath();
-            ctx.moveTo(e.pageX,e.pageY);
-            ctx.lineCap = "round";
-            
-            ctx.strokeStyle = "rgba(64,64,64,0.5)";
-            ctx.lineWidth = 1;
-            
-            
-            
-            ctx.lineTo(10,10);
-            
-            ctx.stroke();
-		},20),
+		render: function(e){
+
+			this.sandbox.stats.update();
+			this.sandbox.renderer.render(this.sandbox.stage);
+			this.channel.publish('game.render');
+			this.frame = requestAnimFrame($.proxy(this.render,this));
+		},
 		stop: function(){
 			this.active = false;	
 		},
 		doStuff: function(e){
-			//console.log(this,e);
+			var x = e.offsetX,
+				y = e.offsetY;
+
+			this.channel.publish('game.clicked',{x:x,y:y});
+			e.preventDefault();
+
 		}
 	});
 

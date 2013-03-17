@@ -1,15 +1,18 @@
 require([
 	"pumpkin",
 	//modules
-	"modules/stage"
+	"modules/stage",
+	"modules/players"
 ],function(
 	Pumpkin,
-	Stage
+	Stage,
+	Players
 ){
 
 	var App = Pumpkin.App.extend({
 		modules: {
-			stage: Stage
+			stage: Stage,
+			players: Players
 		},
 		topics: {
 			"api.debug" : "debug",
@@ -20,11 +23,19 @@ require([
             
 		},
 		start: function(options){
+
+			this.sandbox.stats = new Stats();
+			this.sandbox.textures = {};
+
+			this.sandbox.textures.bar = PIXI.Texture.fromImage("img/bar.png");
+
+			document.body.appendChild(this.sandbox.stats.domElement);
+
 			this.sandbox.root = $(options.root);
 			this.default_module = options.default_module || "stage";
 
 			for(var m in this.modules){
-				this.sandbox.module_channel.publish('init',{module:m})
+				this.sandbox.module_channel.publish('init',{module:m});
 			}
 
 		},
