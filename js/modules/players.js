@@ -19,7 +19,11 @@ define([
 			var variance = 2;
 			var min_height = 1;
 
-			for (var i = 0; i < 320; i++) {
+			var PI = parseFloat(Math.PI.toFixed(4));
+			var PI2 = PI*2;
+			var counter = Math.random()*256<<0;
+
+			for (var i = 0; i < counter; i++) {
 				var bar = new PIXI.Sprite(this.sandbox.textures.bar);
 				var bx = position.x;
 				var by = position.y;
@@ -57,11 +61,11 @@ define([
 				bar.position.x = bx;
 				bar.position.y = by;
 				bar.scaler = 0.5;
-				bar.width = 1;
-				bar.height = (Math.abs((i%num_steps)-13)*13)+min_height;
+				bar.width = 2;
+				bar.height = (Math.abs((i%num_steps)-11)*7)+min_height;
 				
 
-				bar.rotation += 0.09*i;
+				bar.rotation += (PI2/counter)*i;
 				
 
 				
