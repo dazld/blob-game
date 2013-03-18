@@ -22,7 +22,8 @@ define([
 			
 		},
 		events: {
-			"mousedown":"doStuff"
+			"mousedown":"doStuff",
+			"touchstart":"doStuff"
 			/*"mousemove":"render"*/
 
 		},
