@@ -16,7 +16,7 @@ define([
 
 			var iterate = 0.5;
 
-			for (var i = 0; i < 150; i++) {
+			for (var i = 0; i < 80; i++) {
 				var bar = new PIXI.Sprite(this.sandbox.textures.bar);
 				var bx = position.x;
 				var by = position.y;
@@ -31,17 +31,21 @@ define([
 						bx +=1;
 						by +=1;
 						break;
-					case (i%2==0):
+					case (i%3==0):
 						bx -=1;
 						by -=1;
 						break;
-					case (i%3==0):
+					case (i%4==0):
 						bx -=2;
 						by -=2;
 						break;
-					case (i%4==0):
+					case (i%5==0):
 						bx +=2;
 						by +=2;
+						break;
+					case (i%6==0):
+						bx +=3;
+						by +=3;
 						break;
 				}
 
