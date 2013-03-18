@@ -15,11 +15,16 @@ define([
 		handleClick: function(position){
 
 			var iterate = 0.5;
+			var num_steps = 26;
+			var variance = 2;
+			var min_height = 1;
 
-			for (var i = 0; i < 80; i++) {
+			for (var i = 0; i < 320; i++) {
 				var bar = new PIXI.Sprite(this.sandbox.textures.bar);
 				var bx = position.x;
 				var by = position.y;
+
+
 
 				bar.anchor.x = 1;
 				bar.anchor.y = 1;
@@ -53,7 +58,7 @@ define([
 				bar.position.y = by;
 				bar.scaler = 0.5;
 				bar.width = 1;
-				bar.height = 1;
+				bar.height = (Math.abs((i%num_steps)-13)*13)+min_height;
 				
 
 				bar.rotation += 0.09*i;
@@ -71,10 +76,10 @@ define([
 		updatePlayers: function(){
 			this.players.forEach(function(player){
 				
-				if (player.height > 100 || player.height < 1) {
+				if (player.height > 180 || player.height < 1) {
 					player.scaler = -player.scaler;
 				};
-				player.rotation += 0.03;
+				player.rotation += 0.003;
 				player.height += player.scaler;
 			});
 		}
